@@ -1,0 +1,22 @@
+{
+  "name": "atyaragf",
+  "version": "1.0.0",
+  "description": "AGF oranlarını kaydedip istendiğinde telegram üzerinden gönderen uygulama",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/acarik/atyaragf.git"
+  },
+  "author": "Ali Can ARIK",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/acarik/atyaragf/issues"
+  },
+  "homepage": "https://github.com/acarik/atyaragf#readme",
+  "dependencies": {
+    "node-telegram-bot-api": "^0.50.0"
+  }
+}
