@@ -20,8 +20,8 @@ function getCurrentDateString() {
     // current seconds
     let seconds = date_ob.getSeconds();
 
-    return (year + month + date)
-    
+    return (date + month + year)
+
     // prints date in YYYY-MM-DD format
     console.log(year + "-" + month + "-" + date);
 
@@ -32,6 +32,17 @@ function getCurrentDateString() {
     console.log(hours + ":" + minutes);
 }
 
+function error(str) {
+    console.log("[ERROR] " + str);
+
+}
+
+function log(str) {
+    console.log("[LOG] " + str);
+}
+
 module.exports = {
-    getCurrentDateString: getCurrentDateString
+    getCurrentDateString: getCurrentDateString,
+    error: error,
+    log: log
 }
