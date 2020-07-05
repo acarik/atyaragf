@@ -1,6 +1,6 @@
 const helpers = require("./helper-functions.js");
 
-require('./bot.js');
+//require('./bot.js');
 
 require('./agfcheck.js');
 
