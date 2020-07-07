@@ -14,27 +14,54 @@ birlikte database'e kaydet.
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const parse = require("node-html-parser").parse;
-
+const db = require('./db.js');
 const helpers = require("./helper-functions.js");
-const currentDate = helpers.getCurrentDateString();
-helpers.log("current date str: " + currentDate);
-// https://www.tjk.org/AGFv2/7/17062020/TR/0
-parseAgfPage(currentDate, 2)
+params = require('./params.json')
+global.currParkurNum = params.minParkurNum;
 
-function parseAgfPage(currentDateString, cityNum) {
+setInterval(agfPageParser, params.timeinterval);
+
+function agfPageParser() {
+    const currentDate = helpers.getCurrentDateString();
+    //helpers.log("current date str: " + currentDate);
+    // https://www.tjk.org/AGFv2/7/17062020/TR/0
+    parseAgfPage(currentDate, currParkurNum)
+
+    currParkurNum++;
+    if (currParkurNum > params.maxParkurNum) {
+        currParkurNum = params.minParkurNum;
+    }
+}
+
+function parseAgfPage(currentDateString, parkurNum) {
     const request = require("request");
-    const url = "http://localhost:8521/dashboard/";//"https://www.tjk.org/AGFv2/" + cityNum.toString() + "/" + currentDateString + "/TR/0";
+    //const url = "http://localhost:8521/dashboard/";
+    const url = "https://www.tjk.org/AGFv2/" + parkurNum.toString() + "/" + currentDateString + "/TR/0";
+    helpers.log('parsing for ' + currentDateString + " @ " + parkurNum.toString() + ", url:" + url)
     request({ uri: url }, function (error, response, body) {
         const dom = new JSDOM(body);
         //const baslik = dom.window.document.getElementById("bas").textContent;
         let ayakNo = 0;
         while (true) {
             ayakNo++;
-            const textContent = dom.window.document.getElementById("GridView" + ayakNo.toString()).outerHTML;
+            const tableDom = dom.window.document.getElementById("GridView" + ayakNo.toString());
+            if (tableDom == null)
+                break;
+            const textContent = tableDom.outerHTML;
             const root = parseStructuredText(parse(textContent).structuredText);
-            debugger
+            // db'ye kaydedelim
+            root.forEach(element => {
+                db.addAgf({
+                    time: helpers.getCurrentTimeString(),
+                    day: currentDateString,
+                    parkurNum: parkurNum,
+                    ayak: ayakNo,
+                    atNum: element.atNum,
+                    agf: element.agfOran,
+                    startNum: element.startNum
+                })
+            });
         }
-        debugger
     });
 }
 
@@ -64,7 +91,30 @@ function parseStructuredText(inputString) {
             numberStrings[ind].push(inputString[i])
         }
     }
-    debugger
+    numberStrings.pop();
+    let numbers = [];
+    for (let i = 0; i < numberStrings.length; i++) {
+        let curr = [];
+        numberStrings[i].forEach(element => {
+            if (element == ',')
+                curr += '.';
+            else
+                curr += element;
+        });
+        numbers.push(parseFloat(curr))
+    }
+    let table = [];
+    const n = numbers.length / 3;
+    for (let i = 0; i < n; i++) {
+
+        table.push(
+            {
+                startNum: numbers[i * 3],
+                atNum: numbers[i * 3 + 1],
+                agfOran: numbers[i * 3 + 2]
+            });
+    }
+    return table;
 }
 
 function isNumberChar(c) {
@@ -74,7 +124,7 @@ function isNumberChar(c) {
             return i;
         }
     }
-    if (c==','){
+    if (c == ',') {
         return '.';
     }
     return -1;

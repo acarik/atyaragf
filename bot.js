@@ -1,8 +1,19 @@
 const params = require('./params.json')
 const TelegramBot = require('node-telegram-bot-api');
+const db = require('./db.js')
 
 // Create a bot that uses 'polling' to fetch new updates
-const bot = new TelegramBot(params.token, {polling: true});
+const bot = new TelegramBot(params.token, { polling: true });
+
+bot.onText(/\/deleteAll/, (msg, match) => {
+  bot.sendMessage(msg.chat.id, "deleting all");
+  db.deleteAll();
+});
+
+bot.onText(/\/getAll/, (msg, match) => {
+  bot.sendMessage(msg.chat.id, "getting all");
+  db.getAll();
+});
 
 // Matches "/echo [whatever]"
 bot.onText(/\/echo (.+)/, (msg, match) => {

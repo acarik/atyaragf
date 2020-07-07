@@ -8,22 +8,46 @@ mongoose.connect(params.mongoURI, { useUnifiedTopology: true, useNewUrlParser: t
 
 mongoose.connection.on("connected", function () {
     helpers.log("Connected to db.")
+    //deleteAll();
 })
 
 
-function addAgf() {
+function addAgf(agfinfo) {
     checkConnection();
+    const agf = new Agf(agfinfo);
+    agf.save(function (error) {
+        if (error) {
+            helpers.error("Error saving new agf\n" + agf)
+        } else {
+            //helpers.log("Successfully saved agf\n" + agf)
+        }
+    })
+}
 
+function getAll() {
+    Agf.find(function (error, agfs) {
+        if (error) return helpers.error(error);
+        helpers.log(agfs)
+        helpers.log("Total of " + agfs.length.toString() + " elements")
+    })
+}
+
+function deleteAll() {
+    Agf.deleteMany(function (error, res) {
+        if (error) return helpers.error(error);
+        helpers.log("deleted all elements in db")
+    });
 }
 
 function checkConnection() {
     if (mongoose.connection.readyState) {
-        helpers.log("Connection OK.")
-    }else{
+        //helpers.log("Connection OK.")
+    } else {
         helpers.error("Connection error.")
     }
 }
 
 module.exports = {
-    addAgf: addAgf
+    addAgf: addAgf,
+    getAll: getAll
 }

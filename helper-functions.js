@@ -32,6 +32,10 @@ function getCurrentDateString() {
     console.log(hours + ":" + minutes);
 }
 
+function getCurrentTimeString() {
+    return new Date();
+}
+
 function error(str) {
     console.log("[ERROR] " + str);
 
@@ -43,6 +47,7 @@ function log(str) {
 
 module.exports = {
     getCurrentDateString: getCurrentDateString,
+    getCurrentTimeString: getCurrentTimeString,
     error: error,
     log: log
 }

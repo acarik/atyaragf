@@ -4,7 +4,7 @@ Schema = mongoose.Schema;
 // create a schema for Agf
 let agfSchema = new Schema({
     time: Number,
-    parkurStr: String,
+    day: Number,
     parkurNum: Number,
     ayak: Number,
     atNum: Number,
