@@ -15,6 +15,7 @@ const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const parse = require("node-html-parser").parse;
 const db = require('./db.js');
+const { parkurStr } = require("./helper-functions.js");
 const helpers = require("./helper-functions.js");
 params = require('./params.json')
 global.currParkurNum = params.minParkurNum;
@@ -36,9 +37,14 @@ function agfPageParser() {
 function parseAgfPage(currentDateString, parkurNum) {
     const request = require("request");
     //const url = "http://localhost:8521/dashboard/";
-    const url = "https://www.tjk.org/AGFv2/" + parkurNum.toString() + "/" + currentDateString + "/TR/0";
+    const url = "https://www.tjk.org/AGFv2/" + parkurNum.toString() + "/" + currentDateString + "/TR/1/0";
     helpers.log('parsing for ' + currentDateString + " @ " + parkurNum.toString() + ", url:" + url)
     request({ uri: url }, function (error, response, body) {
+        if (body.includes('Error in \'/AGFV2\' Application.')) {
+            // demek ki boyle bir kosu yokmus
+            helpers.log('yok boyle bir kosu, ' + parkurStr(parkurNum) + ' parkuru, ' + currentDateString + ' tarihli');
+            return;
+        }
         const dom = new JSDOM(body);
         //const baslik = dom.window.document.getElementById("bas").textContent;
         let ayakNo = 0;

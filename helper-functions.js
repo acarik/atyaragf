@@ -45,9 +45,52 @@ function log(str) {
     console.log("[LOG] " + str);
 }
 
+function parkurStr(parkurNum) {
+    let str = parkurNum.toString()
+    switch (parkurNum) {
+        case 5:
+            str = 'Ankara';
+            break;
+        case 2:
+            str = 'Izmir';
+            break;
+    };
+    return str;
+}
+
+function sortAndRemoveDups(input) {
+    let out = [];
+    input.forEach(elementInput => {
+        let bulundu = false;
+        out.forEach(elementOutput => {
+            if (elementOutput == elementInput) {
+                bulundu = true;
+                return;
+            }
+        });
+        if (bulundu) {
+            // skip
+        } else {
+            out.push(elementInput);
+        }
+    });
+    return out;
+}
+
+function stylizeParkurs(parkurs) {
+    if (parkurs.length == 0) {
+        return " -- YOK --"
+    } else {
+        return [];
+    }
+}
+
 module.exports = {
     getCurrentDateString: getCurrentDateString,
     getCurrentTimeString: getCurrentTimeString,
     error: error,
-    log: log
+    log: log,
+    parkurStr: parkurStr,
+    sortAndRemoveDups: sortAndRemoveDups,
+    stylizeParkurs: stylizeParkurs
 }

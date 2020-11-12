@@ -1,10 +1,25 @@
 const params = require('./params.json')
 const TelegramBot = require('node-telegram-bot-api');
 const db = require('./db.js')
+const helpers = require("./helper-functions.js");
+const { parkurStr } = require('./helper-functions.js');
 
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(params.token, { polling: true });
 
+bot.onText(/\/help/, (msg, match) => {
+  bot.sendMessage(msg.chat.id, "/start yazarak bugünün yarışlarına bakabilirsin.")
+})
+
+bot.onText(/\/start/, (msg, match) => {
+  // bugunun yarislarina bakalim
+  bot.sendMessage(msg.chat.id, "Bugunun yarislari:")
+  let parkursToday = db.getParkursToday();
+  console.log(parkursToday);
+  //const parkurs = db.getParkursToday();
+})
+
+/*
 bot.onText(/\/deleteAll/, (msg, match) => {
   bot.sendMessage(msg.chat.id, "deleting all");
   db.deleteAll();
@@ -36,3 +51,4 @@ bot.on('message', (msg) => {
   // send a message to the chat acknowledging receipt of their message
   bot.sendMessage(chatId, 'Received your message');
 });
+*/

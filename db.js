@@ -32,6 +32,22 @@ function getAll() {
     })
 }
 
+function getParkursToday() {
+    const currentDate = helpers.getCurrentDateString();
+    const parkurs = [];
+    Agf.find({ day: currentDate }, function (err, docs) {
+        docs.forEach(element => {
+            parkurs.push(element.parkurNum)
+        });
+        if (parkurs.length == 0){
+            return "bugun yaris bulunamadi."
+        }else{
+            let sortedParkurs = helpers.sortAndRemoveDups(parkurs);
+            return sortedParkurs;
+        }
+    })
+}
+
 function deleteAll() {
     Agf.deleteMany(function (error, res) {
         if (error) return helpers.error(error);
@@ -49,5 +65,6 @@ function checkConnection() {
 
 module.exports = {
     addAgf: addAgf,
-    getAll: getAll
+    getAll: getAll,
+    getParkursToday: getParkursToday
 }
