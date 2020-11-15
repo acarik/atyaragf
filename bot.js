@@ -13,9 +13,13 @@ bot.onText(/\/help/, (msg, match) => {
 
 bot.onText(/\/start/, (msg, match) => {
   // bugunun yarislarina bakalim
-  bot.sendMessage(msg.chat.id, "Bugunun yarislari:")
-  let parkursToday = db.getParkursToday();
-  console.log(parkursToday);
+  db.getParkursToday(function callback(err, data) {
+    if (err){
+      helpers.error(err)
+    }else{
+      bot.sendMessage(msg.chat.id, "Bugunun yarislari:" + data)
+    }
+  });
   //const parkurs = db.getParkursToday();
 })
 

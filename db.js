@@ -32,7 +32,7 @@ function getAll() {
     })
 }
 
-function getParkursToday() {
+function getParkursToday(callback) {
     const currentDate = helpers.getCurrentDateString();
     const parkurs = [];
     Agf.find({ day: currentDate }, function (err, docs) {
@@ -40,10 +40,10 @@ function getParkursToday() {
             parkurs.push(element.parkurNum)
         });
         if (parkurs.length == 0){
-            return "bugun yaris bulunamadi."
+            return callback("bugun yaris bulunamadi.",null);
         }else{
             let sortedParkurs = helpers.sortAndRemoveDups(parkurs);
-            return sortedParkurs;
+            return callback(null, sortedParkurs);
         }
     })
 }
