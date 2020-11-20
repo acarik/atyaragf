@@ -1,7 +1,8 @@
 const mongoose = require("mongoose")
 const params = require('./params.json')
 const helpers = require("./helper-functions");
-const Agf = require('./models/Agf.js')
+const Agf = require('./models/Agf.js');
+const { parkurStr } = require("./helper-functions");
 
 
 mongoose.connect(params.mongoURI, { useUnifiedTopology: true, useNewUrlParser: true });
@@ -32,19 +33,28 @@ function getAll() {
     })
 }
 
+function getKosu(day, parkurNum, callback) {
+    Agf.find({ day: day, parkurNum: parkurNum }, function (err, docs) {
+        if (err) {
+            return callback(err, null)
+        }
+        return callback(null, helpers.kosuSort(docs))
+    })
+}
+
 function getParkursToday(callback) {
     const currentDate = helpers.getCurrentDateString();
     const parkurs = [];
     Agf.find({ day: currentDate }, function (err, docs) {
-        docs.forEach(element => {
-            parkurs.push(element.parkurNum)
-        });
-        if (parkurs.length == 0){
-            return callback("bugun yaris bulunamadi.",null);
-        }else{
-            let sortedParkurs = helpers.sortAndRemoveDups(parkurs);
-            return callback(null, sortedParkurs);
+        if (err) {
+            return callback(err, null)
         }
+        docs.forEach(element => {
+            parkurs.push({ day: currentDate, parkurNum: element.parkurNum })
+        });
+        let sortedParkurs = helpers.parkurSortAndRemoveDups(parkurs);
+        return callback(null, sortedParkurs);
+
     })
 }
 
@@ -66,5 +76,6 @@ function checkConnection() {
 module.exports = {
     addAgf: addAgf,
     getAll: getAll,
-    getParkursToday: getParkursToday
+    getParkursToday: getParkursToday,
+    getKosu: getKosu
 }

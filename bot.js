@@ -14,14 +14,57 @@ bot.onText(/\/help/, (msg, match) => {
 bot.onText(/\/start/, (msg, match) => {
   // bugunun yarislarina bakalim
   db.getParkursToday(function callback(err, data) {
-    if (err){
+    if (err) {
       helpers.error(err)
-    }else{
-      bot.sendMessage(msg.chat.id, "Bugunun yarislari:" + data)
+    } else {
+      if (data.length == 0) {
+        bot.sendMessage(msg.chat.id, "Bugün için yarış yok.")
+      } else {
+        bot.sendMessage(msg.chat.id, "Bugünün yarışları:")
+        data.forEach(element => {
+          bot.sendMessage(msg.chat.id, helpers.stylizeYaris(element))
+        });
+      }
     }
   });
-  //const parkurs = db.getParkursToday();
 })
+
+bot.onText(/\/\d{8}_\d{1,2}/, (msg, match) => {
+  // tek bir kosuya veya ata bakalim
+  //delete first element
+  let msgText = msg.text.substring(1);
+  const fields = msgText.split('_')
+
+  const day = fields[0];
+  const parkurNum = fields[1];
+
+  switch (fields.length) {
+    case 2: // kosu
+      db.getKosu(day, parseInt(parkurNum), function callback(err, data) {
+        if (err){
+          return helpers.error(err)
+        }
+        if (data.length == 0) {
+          bot.sendMessage(msg.chat.id, "Bu koşuda at yok.")
+        } else {
+          bot.sendMessage(msg.chat.id, "Bu koşudaki atlar:")
+          data.forEach(element => {
+            bot.sendMessage(msg.chat.id, helpers.stylizeAt(element))
+          });
+        }
+      })
+      break;
+    case 3: // kosudaki at
+      break;
+    default:
+      illegalCodeError(msg)
+      break;
+  }
+})
+
+function illegalCodeError(msg){
+  bot.sendMessage(msg.chat.id, "Yanlis giris.")
+}
 
 /*
 bot.onText(/\/deleteAll/, (msg, match) => {

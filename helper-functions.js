@@ -48,22 +48,28 @@ function log(str) {
 function parkurStr(parkurNum) {
     let str = parkurNum.toString()
     switch (parkurNum) {
+        case 2:
+            str = 'İzmir';
+            break;
+        case 3:
+            str = 'İstanbul';
+            break;
+        case 4:
+            str = 'Bursa';
+            break;
         case 5:
             str = 'Ankara';
-            break;
-        case 2:
-            str = 'Izmir';
             break;
     };
     return str;
 }
 
-function sortAndRemoveDups(input) {
+function parkurSortAndRemoveDups(input) {
     let out = [];
     input.forEach(elementInput => {
         let bulundu = false;
         out.forEach(elementOutput => {
-            if (elementOutput == elementInput) {
+            if (elementOutput.parkurNum == elementInput.parkurNum) {
                 bulundu = true;
                 return;
             }
@@ -77,12 +83,12 @@ function sortAndRemoveDups(input) {
     return out;
 }
 
-function stylizeParkurs(parkurs) {
-    if (parkurs.length == 0) {
-        return " -- YOK --"
-    } else {
-        return [];
-    }
+function kosuSort(kosular) {
+    return kosular;
+}
+
+function stylizeYaris(parkur) {
+    return ('/' + parkur.day + '_' + parkur.parkurNum + " (" + parkurStr(parkur.parkurNum) + ")");
 }
 
 module.exports = {
@@ -91,6 +97,7 @@ module.exports = {
     error: error,
     log: log,
     parkurStr: parkurStr,
-    sortAndRemoveDups: sortAndRemoveDups,
-    stylizeParkurs: stylizeParkurs
+    parkurSortAndRemoveDups: parkurSortAndRemoveDups,
+    stylizeYaris: stylizeYaris,
+    kosuSort: kosuSort
 }
