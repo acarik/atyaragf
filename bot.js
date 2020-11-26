@@ -29,32 +29,80 @@ bot.onText(/\/start/, (msg, match) => {
   });
 })
 
-bot.onText(/\/\d{8}_\d{1,2}/, (msg, match) => {
+bot.onText(/\/\d{8}_\d{0,2}/, (msg, match) => {
   // tek bir kosuya veya ata bakalim
   //delete first element
   let msgText = msg.text.substring(1);
   const fields = msgText.split('_')
 
   const day = fields[0];
-  const parkurNum = fields[1];
+  const parkurNumStr = fields[1];
+  const parkurNum = parseInt(parkurNumStr);
+  const ayakNumStr = fields[2];
+  const ayakNum = parseInt(ayakNumStr);
+  const atNumStr = fields[3];
+  const atNum = parseInt(atNumStr);
 
   switch (fields.length) {
-    case 2: // kosu
-      db.getKosu(day, parseInt(parkurNum), function callback(err, data) {
-        if (err){
+    case 1: //gun. "/20112020" gibi bir sorgu gelmis. o gunku yarislari dondurelim
+      db.getParkurlar(day, function callback(err, data) {
+        if (err) {
+          return helpers.error(err)
+        }
+        if (data.length == 0) {
+          bot.sendMessage(msg.chat.id, "Bu gün koşu yok.")
+        } else {
+          bot.sendMessage(msg.chat.id, day + " için koşulan parkurlar:");
+          data.forEach(element => {
+            bot.sendMessage(msg.chat.id,
+              "/" + day + '_' + parkurNumStr + (day + " " + helpers.parkurStr(parkurNum)))
+          })
+        }
+      })
+    case 2: // parkur. "/20112020_3" gibi bir sorgu gelmis. o parkurdaki ayaklari dondurelim
+      db.getAyaklar(day, parseInt(parkurNumStr), function callback(err, data) {
+        if (err) {
+          return helpers.error(err)
+        }
+        if (data.length == 0) {
+          bot.sendMessage(msg.chat.id, "Bu parkurda ayak yok.")
+        } else {
+          bot.sendMessage(msg.chat.id, day + " " + helpers.parkurStr(parkurNumStr) + " için ayaklar:");
+          data.forEach(element => {
+            bot.sendMessage(msg.chat.id,
+              "/" + day + '_' + parkurNumStr + '_' + element + " " + (day + " " + helpers.parkurStr(parkurNum) + " " + element + ". Ayak"))
+          })
+        }
+      })
+    case 3: // parkur kosu. "/20112020_3_1" gibi bir sorgu gelmis
+      db.getKosuAtlar(day, parkurNum, ayakNum, function callback(err, data) {
+        if (err) {
           return helpers.error(err)
         }
         if (data.length == 0) {
           bot.sendMessage(msg.chat.id, "Bu koşuda at yok.")
         } else {
-          bot.sendMessage(msg.chat.id, "Bu koşudaki atlar:")
+          bot.sendMessage(msg.chat.id, day + " " + helpers.parkurStr(parkurNum) + " " + ayakNumStr + ". Ayak koşusundaki atlar:")
           data.forEach(element => {
-            bot.sendMessage(msg.chat.id, helpers.stylizeAt(element))
+            bot.sendMessage(msg.chat.id,
+              "/" + day + '_' + parkurNumStr + '_' + ayakNumStr + "_" + element + " " + (day + " " + helpers.parkurStr(parkurNum) + " " + ayakNumStr + ". Ayak, " + element + ". At"))
           });
         }
       })
       break;
-    case 3: // kosudaki at
+    case 4: // kosudaki at
+      db.getAt(day, parkurNum, ayakNum, atNum, function callback(err, data) {
+        if (err) {
+          return helpers.error(err)
+        }
+        if (data.length == 0) {
+          bot.sendMessage(msg.chat.id, "Bu ata dair kayıt yok.")
+        } else {
+          //bot.sendMessage(msg.chat.id, day + " " + helpers.parkurStr(parkurNum) + " " + ayakNumStr + ". Ayak koşusundaki atlar:")
+          bot.sendMessage(msg.chat.id,
+            data.length + " tane kayit var.")
+        }
+      })
       break;
     default:
       illegalCodeError(msg)
@@ -62,7 +110,7 @@ bot.onText(/\/\d{8}_\d{1,2}/, (msg, match) => {
   }
 })
 
-function illegalCodeError(msg){
+function illegalCodeError(msg) {
   bot.sendMessage(msg.chat.id, "Yanlis giris.")
 }
 

@@ -83,7 +83,26 @@ function parkurSortAndRemoveDups(input) {
     return out;
 }
 
+function stylizeAt(at) {
+    return ('#' + at.toString());
+}
+
+function stylizeAyak(ayak) {
+    return ('ayak#' + ayak.toString());
+}
+
 function kosuSort(kosular) {
+    // en son tarihli kosu bilgisini al
+    const maxAtNo = 100;
+    let atlar = [];
+    kosular.forEach(kosu => {
+        if (kosu[kosu.atNum].length == 0) {
+            atlar[kosu.atNum] = kosu;
+        } else {
+            // kosu'daki daha guncel ise guncelle
+
+        }
+    });
     return kosular;
 }
 
@@ -99,5 +118,6 @@ module.exports = {
     parkurStr: parkurStr,
     parkurSortAndRemoveDups: parkurSortAndRemoveDups,
     stylizeYaris: stylizeYaris,
-    kosuSort: kosuSort
+    stylizeAt: stylizeAt,
+    stylizeAyak: stylizeAyak
 }

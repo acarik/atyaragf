@@ -34,11 +34,47 @@ function getAll() {
 }
 
 function getKosu(day, parkurNum, callback) {
-    Agf.find({ day: day, parkurNum: parkurNum }, function (err, docs) {
+    Agf.find({ day: day, parkurNum: parkurNum }.sort({ time: 1 }), function (err, docs) {
         if (err) {
             return callback(err, null)
         }
         return callback(null, helpers.kosuSort(docs))
+    })
+}
+
+function getKosuAtlar(day, parkurNum, ayakNum, callback) {
+    Agf.distinct("atNum", { day: day, parkurNum: parkurNum, ayak: ayakNum }, function (err, docs) {
+        if (err) {
+            return callback(err, null)
+        }
+        return callback(null, docs.sort())
+    })
+}
+
+function getAt(day, parkurNum, ayakNum, atNum, callback) {
+    Agf.find({ day: day, parkurNum: parkurNum, ayak: ayakNum, atNum: atNum }, function (err, docs) {
+        if (err) {
+            return callback(err, null)
+        }
+        return callback(null, docs.sort())
+    })
+}
+
+function getAyaklar(day, parkurNum, callback) {
+    Agf.distinct("ayak", { day: day, parkurNum: parkurNum }, function (err, docs) {
+        if (err) {
+            return callback(err, null)
+        }
+        return callback(null, docs.sort())
+    })
+}
+
+function getParkurlar(day, callback) {
+    Agf.distinct("parkurNum", { day: day }, function (err, docs) {
+        if (err) {
+            return callback(err, null)
+        }
+        return callback(null, docs.sort())
     })
 }
 
@@ -58,13 +94,6 @@ function getParkursToday(callback) {
     })
 }
 
-function deleteAll() {
-    Agf.deleteMany(function (error, res) {
-        if (error) return helpers.error(error);
-        helpers.log("deleted all elements in db")
-    });
-}
-
 function checkConnection() {
     if (mongoose.connection.readyState) {
         //helpers.log("Connection OK.")
@@ -77,5 +106,9 @@ module.exports = {
     addAgf: addAgf,
     getAll: getAll,
     getParkursToday: getParkursToday,
-    getKosu: getKosu
+    getKosu: getKosu,
+    getKosuAtlar: getKosuAtlar,
+    getAyaklar: getAyaklar,
+    getAt: getAt,
+    getParkurlar: getParkurlar
 }
