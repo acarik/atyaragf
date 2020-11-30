@@ -60,6 +60,12 @@ function parkurStr(parkurNum) {
         case 5:
             str = 'Ankara';
             break;
+        case 9:
+            str = 'Kocaeli';
+            break;
+        case 26:
+            str = 'Deauville Fransa';
+            break;
     };
     return str;
 }

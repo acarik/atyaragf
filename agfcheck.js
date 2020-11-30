@@ -44,6 +44,9 @@ function parseAgfPage(currentDateString, parkurNum) {
             // demek ki boyle bir kosu yokmus
             helpers.log('yok boyle bir kosu, ' + parkurStr(parkurNum) + ' parkuru, ' + currentDateString + ' tarihli');
             return;
+        } else {
+            // demek ki boyle bir kosu varmis.
+            helpers.log('VAR boyle bir kosu, ' + parkurStr(parkurNum) + ' parkuru, ' + currentDateString + ' tarihli');
         }
         const dom = new JSDOM(body);
         //const baslik = dom.window.document.getElementById("bas").textContent;

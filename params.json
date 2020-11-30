@@ -2,7 +2,7 @@
     "token": "1270344351:AAGdmxYKu-SCb9MpSAO8CO25QNnDY-LqloQ",
     "mongoURI": "mongodb://atyaragf-app:HJ8H7CjnkLc3VRHaEFgFBKpYmKwmr52qAAXuDQn6CFUcbvA2dxWsjHFmzkN2FNxu@ds161012.mlab.com:61012/atyaragf-test",
     "minParkurNum": 0,
-    "maxParkurNum": 20,
-    "timeinterval": 15000
+    "maxParkurNum": 26,
+    "timeinterval": 1500
 }
 

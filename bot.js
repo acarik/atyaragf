@@ -8,9 +8,10 @@ const { parkurStr } = require('./helper-functions.js');
 const bot = new TelegramBot(params.token, { polling: true });
 
 bot.onText(/\/help/, (msg, match) => {
-  bot.sendMessage(msg.chat.id, "/start yazarak bugünün yarışlarına bakabilirsin.")
+  bot.sendMessage(msg.chat.id, "/GGAAYYYY formatında tarih yazarak o gün koşulan parkurlar sorgulanabilir. \nÖrnek: /30112020")
 })
 
+/*
 bot.onText(/\/start/, (msg, match) => {
   // bugunun yarislarina bakalim
   db.getParkursToday(function callback(err, data) {
@@ -28,8 +29,31 @@ bot.onText(/\/start/, (msg, match) => {
     }
   });
 })
+*/
 
-bot.onText(/\/\d{8}_\d{0,2}/, (msg, match) => {
+bot.onText(/\/\d{8}$/, (msg, match) => {
+  //gun. "/20112020" gibi bir sorgu gelmis. o gunku yarislari dondurelim
+  let msgText = msg.text.substring(1);
+  const fields = msgText.split('_')
+
+  const day = fields[0];
+  db.getParkurlar(day, function callback(err, data) {
+    if (err) {
+      return helpers.error(err)
+    }
+    if (data.length == 0) {
+      bot.sendMessage(msg.chat.id, day + " günü koşu yok.")
+    } else {
+      bot.sendMessage(msg.chat.id, day + " tarihinde koşulan parkurlar:");
+      data.forEach(parkurNum => {
+        bot.sendMessage(msg.chat.id,
+          "/" + day + '_' + parkurNum + " (" + day + " " + helpers.parkurStr(parkurNum) + ")");
+      })
+    }
+  })
+});
+
+bot.onText(/\/\d{8}_\d{1,2}/, (msg, match) => {
   // tek bir kosuya veya ata bakalim
   //delete first element
   let msgText = msg.text.substring(1);
@@ -44,21 +68,6 @@ bot.onText(/\/\d{8}_\d{0,2}/, (msg, match) => {
   const atNum = parseInt(atNumStr);
 
   switch (fields.length) {
-    case 1: //gun. "/20112020" gibi bir sorgu gelmis. o gunku yarislari dondurelim
-      db.getParkurlar(day, function callback(err, data) {
-        if (err) {
-          return helpers.error(err)
-        }
-        if (data.length == 0) {
-          bot.sendMessage(msg.chat.id, "Bu gün koşu yok.")
-        } else {
-          bot.sendMessage(msg.chat.id, day + " için koşulan parkurlar:");
-          data.forEach(element => {
-            bot.sendMessage(msg.chat.id,
-              "/" + day + '_' + parkurNumStr + (day + " " + helpers.parkurStr(parkurNum)))
-          })
-        }
-      })
     case 2: // parkur. "/20112020_3" gibi bir sorgu gelmis. o parkurdaki ayaklari dondurelim
       db.getAyaklar(day, parseInt(parkurNumStr), function callback(err, data) {
         if (err) {
