@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/acarik/atyaragf#readme",
   "dependencies": {
-    "jsdom": "^16.2.2",
+    "jsdom": "^16.5.0",
     "mongoose": "^5.9.19",
     "node-html-parser": "^1.2.20",
     "node-telegram-bot-api": "^0.50.0"
